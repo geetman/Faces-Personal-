@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Faces — People Memory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══ AUTH SCREEN ═══ -->
+<div id="auth-screen">
+  <div class="auth-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-icon">𝓕</div>
+    <div class="auth-title">Faces</div>
+    <div class="auth-sub">Don't Worry. You can do it.<br>Enter the passphrase to continue.</div>
+    <input class="auth-input" type="password" id="auth-pw-input" placeholder="••••••••" autocomplete="current-password">
+    <button class="auth-btn" id="auth-btn">Unlock →</button>
+    <div class="auth-error" id="auth-error"></div>
+  </div>
+</div>
+
+<!-- ═══ APP ═══ -->
+<div id="app">
+  <!-- decorative wave -->
+  <svg class="app-wave-bg" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <path fill="#C4B5FD" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,170.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L0,320Z"/>
+  </svg>
+
+  <!-- Top bar -->
+  <div class="top-bar">
+    <span class="top-bar-title">Faces</span>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="search" id="search-input" placeholder="Search names…">
+    </div>
+    <button class="add-btn" id="open-add-btn" title="Add person">＋</button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-pill active" data-cat="all">All</button>
+  </div>
+
+  <!-- Cards -->
+  <div style="position:relative;z-index:1;">
+    <div id="cards-container">
+      <div class="spinner"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ADD / EDIT MODAL ═══ -->
+<div class="modal-backdrop" id="form-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title" id="form-modal-title">Add Person</span>
+      <button class="modal-close" id="form-modal-close">✕</button>
+    </div>
+    <div class="form-body">
+      <input type="hidden" id="edit-id">
+
+      <!-- Photo upload -->
+      <div class="form-group">
+        <label class="form-label">Photo</label>
+        <div class="photo-upload-area" id="photo-upload-area">
+          <input type="file" id="photo-file-input" accept="image/*">
+          <div id="photo-preview-container">
+            <span class="upload-icon">📷</span>
+            <div class="upload-label">Tap to add photo</div>
+            <div class="upload-sub">Their face is the key</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Full Name *</label>
+        <input class="form-input" type="text" id="f-name" placeholder="e.g. Mohammed Al-Rashid">
+      </div>
+      <div class="form-group">
+        <label class="form-label">What you call them</label>
+        <input class="form-input" type="text" id="f-nick" placeholder="e.g. Mo, Big Mo, the tall one">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Category *</label>
+        <select class="form-input" id="f-category">
+          <option value="">— choose —</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Memory Hook</label>
+        <textarea class="form-input" id="f-hook" placeholder="e.g. Yusuf's youngest brother, loves cricket, drives a red car, has the big laugh"></textarea>
+      </div>
+
+      <button class="form-submit" id="form-submit-btn">Save Person</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ DETAIL MODAL ═══ -->
+<div class="modal-backdrop" id="detail-modal">
+  <div class="modal-sheet" id="detail-content">
+    <div class="modal-handle"></div>
+    <div class="modal-header" style="justify-content:flex-end; padding-bottom:0;">
+      <button class="modal-close" id="detail-modal-close">✕</button>
+    </div>
+    <!-- filled dynamically -->
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
