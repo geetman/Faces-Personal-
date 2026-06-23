@@ -408,21 +408,22 @@ input:focus, select:focus, textarea:focus {
 /* ── Cards grid ── */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 24px 16px; 
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 52px 16px; 
   padding: 52px 18px 24px;
 }
 
 @media (min-width: 480px) {
   .cards-grid { 
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); 
-    gap: 28px 20px;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); 
+    gap: 56px 20px;
   }
 }
 
 @media (min-width: 700px) {
   .cards-grid { 
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); 
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); 
+    gap: 60px 24px;
   }
 }
 
@@ -960,7 +961,7 @@ textarea.form-input {
   } 
 }
 
-/* ── Abstract decorative wave bg ── */
+/* ── Animated decorative wave bg ── */
 .app-wave-bg {
   position: fixed; 
   bottom: 0; 
@@ -968,7 +969,48 @@ textarea.form-input {
   right: 0; 
   z-index: 0;
   pointer-events: none; 
-  opacity: 0.06;
+  opacity: 0.08;
+  overflow: hidden;
+  height: 200px;
+}
+
+.app-wave-bg svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  animation: waveWarp 12s ease-in-out infinite;
+}
+
+.app-wave-bg svg:nth-child(2) {
+  animation: waveWarp 15s ease-in-out infinite reverse;
+  animation-delay: -3s;
+  opacity: 0.6;
+}
+
+.app-wave-bg svg:nth-child(3) {
+  animation: waveWarp 18s ease-in-out infinite;
+  animation-delay: -6s;
+  opacity: 0.3;
+}
+
+@keyframes waveWarp {
+  0% {
+    transform: translateX(0) scaleY(1) translateY(0);
+  }
+  25% {
+    transform: translateX(-5%) scaleY(1.15) translateY(-8px);
+  }
+  50% {
+    transform: translateX(-2%) scaleY(0.9) translateY(4px);
+  }
+  75% {
+    transform: translateX(-7%) scaleY(1.1) translateY(-4px);
+  }
+  100% {
+    transform: translateX(0) scaleY(1) translateY(0);
+  }
 }
 
 /* ── Scrollbar styling for webkit ── */
