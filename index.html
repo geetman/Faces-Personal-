@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="texture-overlay"></div>
 
 <!-- ═══ AUTH SCREEN ═══ -->
 <div id="auth-screen">
@@ -20,7 +21,7 @@
   <div class="auth-card">
     <div class="auth-icon">𝓕</div>
     <div class="auth-title">Faces</div>
-    <div class="auth-sub">Don't Worry. You can do it.<br>Enter the passphrase to continue.</div>
+    <div class="auth-sub">Don't worry. You can do it.<br>Enter the passphrase to continue.</div>
     <input class="auth-input" type="password" id="auth-pw-input" placeholder="••••••••" autocomplete="current-password">
     <button class="auth-btn" id="auth-btn">Unlock →</button>
     <div class="auth-error" id="auth-error"></div>
@@ -29,17 +30,24 @@
 
 <!-- ═══ APP ═══ -->
 <div id="app">
-  <!-- decorative wave -->
-  <svg class="app-wave-bg" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
-    <path fill="#C4B5FD" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,170.7C1248,171,1344,149,1392,138.7L1440,128L1440,320L0,320Z"/>
-  </svg>
+  <div class="app-wave-bg">
+    <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path fill="#C4B5FD" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,170.7C1248,171,1344,149,1440,138.7L1440,320L0,320Z"/>
+    </svg>
+    <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path fill="#F472B6" d="M0,224L60,213.3C120,203,240,181,360,186.7C480,192,600,224,720,218.7C840,213,960,171,1080,165.3C1200,160,1320,192,1440,197.3L1440,320L0,320Z"/>
+    </svg>
+    <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path fill="#6EE7B7" d="M0,256L80,245.3C160,235,320,213,480,208C640,203,800,213,960,218.7C1120,224,1280,224,1440,213.3L1440,320L0,320Z"/>
+    </svg>
+  </div>
 
   <!-- Top bar -->
   <div class="top-bar">
     <span class="top-bar-title">Faces</span>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input class="search-input" type="search" id="search-input" placeholder="Search names…">
+      <input class="search-input" type="search" id="search-input" placeholder="Search…">
     </div>
     <button class="add-btn" id="open-add-btn" title="Add person">＋</button>
   </div>
@@ -47,13 +55,12 @@
   <!-- Filter bar -->
   <div class="filter-bar" id="filter-bar">
     <button class="filter-pill active" data-cat="all">All</button>
+    <button class="filter-pill fav-pill" data-cat="favourites">⭐ Favourites</button>
   </div>
 
   <!-- Cards -->
   <div style="position:relative;z-index:1;">
-    <div id="cards-container">
-      <div class="spinner"></div>
-    </div>
+    <div id="cards-container"><div class="spinner"></div></div>
   </div>
 </div>
 
@@ -68,7 +75,7 @@
     <div class="form-body">
       <input type="hidden" id="edit-id">
 
-      <!-- Photo upload -->
+      <!-- Photo -->
       <div class="form-group">
         <label class="form-label">Photo</label>
         <div class="photo-upload-area" id="photo-upload-area">
@@ -83,11 +90,11 @@
 
       <div class="form-group">
         <label class="form-label">Full Name *</label>
-        <input class="form-input" type="text" id="f-name" placeholder="e.g. Mohammed Al-Rashid">
+        <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma">
       </div>
       <div class="form-group">
         <label class="form-label">What you call them</label>
-        <input class="form-input" type="text" id="f-nick" placeholder="e.g. Mo, Big Mo, the tall one">
+        <input class="form-input" type="text" id="f-nick" placeholder="e.g. Pri, the tall one, red jacket">
       </div>
       <div class="form-group">
         <label class="form-label">Category *</label>
@@ -95,9 +102,60 @@
           <option value="">— choose —</option>
         </select>
       </div>
+
+      <!-- Totem emoji -->
       <div class="form-group">
-        <label class="form-label">Memory Hook</label>
-        <textarea class="form-input" id="f-hook" placeholder="e.g. Yusuf's youngest brother, loves cricket, drives a red car, has the big laugh"></textarea>
+        <label class="form-label">Totem Emoji</label>
+        <div class="totem-picker-wrap">
+          <input class="form-input totem-input" type="text" id="f-totem" placeholder="Pick one below or type any emoji" maxlength="4" readonly>
+          <div class="totem-grid" id="totem-grid"></div>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="form-group">
+        <label class="form-label">Tags</label>
+        <div class="tag-input-wrap">
+          <div class="tag-chips" id="tag-chips"></div>
+          <input class="form-input tag-text-input" type="text" id="f-tag-input" placeholder="Type a tag and press Enter…">
+        </div>
+      </div>
+
+      <!-- Voice memo -->
+      <div class="form-group">
+        <label class="form-label">Voice Memo <span style="font-weight:400;text-transform:none;font-size:11px;">(max 10 sec)</span></label>
+        <div class="voice-recorder" id="voice-recorder">
+          <button class="voice-record-btn" id="voice-record-btn" type="button">🎙 Hold to Record</button>
+          <div class="voice-status" id="voice-status"></div>
+          <audio id="voice-playback" controls style="display:none;width:100%;margin-top:8px;"></audio>
+          <button class="voice-clear-btn" id="voice-clear-btn" type="button" style="display:none;">✕ Remove memo</button>
+        </div>
+      </div>
+
+      <!-- Last seen -->
+      <div class="form-group">
+        <label class="form-label">Last Seen</label>
+        <input class="form-input" type="date" id="f-last-seen">
+      </div>
+
+      <!-- Memory hook -->
+      <div class="form-group">
+        <label class="form-label">Memory Hook / Note</label>
+        <textarea class="form-input" id="f-hook" placeholder="e.g. Loves cricket, drives a red car, has a great laugh"></textarea>
+      </div>
+
+      <!-- Favourite -->
+      <div class="form-group fav-toggle-group">
+        <label class="fav-toggle-label">
+          <input type="checkbox" id="f-favourite">
+          <span class="fav-toggle-ui">⭐ Mark as Favourite</span>
+        </label>
+      </div>
+
+      <!-- Also Known By -->
+      <div class="form-group" id="also-known-group" style="display:none;">
+        <label class="form-label">Also Known By</label>
+        <div class="known-by-list" id="known-by-list"></div>
       </div>
 
       <button class="form-submit" id="form-submit-btn">Save Person</button>
@@ -109,16 +167,41 @@
 <div class="modal-backdrop" id="detail-modal">
   <div class="modal-sheet" id="detail-content">
     <div class="modal-handle"></div>
-    <div class="modal-header" style="justify-content:flex-end; padding-bottom:0;">
-      <button class="modal-close" id="detail-modal-close">✕</button>
-    </div>
     <!-- filled dynamically -->
+  </div>
+</div>
+
+<!-- ═══ ADD ENCOUNTER MODAL ═══ -->
+<div class="modal-backdrop" id="encounter-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-header">
+      <span class="modal-title">Log Encounter</span>
+      <button class="modal-close" id="encounter-modal-close">✕</button>
+    </div>
+    <div class="form-body">
+      <input type="hidden" id="enc-person-id">
+      <div class="form-group">
+        <label class="form-label">When</label>
+        <input class="form-input" type="datetime-local" id="enc-time">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Where</label>
+        <input class="form-input" type="text" id="enc-location" placeholder="e.g. Mall, Doctor's office, Family lunch">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Note</label>
+        <textarea class="form-input" id="enc-note" placeholder="What happened? What did they wear?"></textarea>
+      </div>
+      <button class="form-submit" id="enc-submit-btn">Save Encounter</button>
+    </div>
   </div>
 </div>
 
 <!-- ═══ TOAST ═══ -->
 <div class="toast" id="toast"></div>
 
-<script type="module" src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
 </body>
 </html>
