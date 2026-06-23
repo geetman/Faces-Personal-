@@ -2,11 +2,15 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0c0e18">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Faces — People Memory</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+<base target="_blank">
 </head>
 <body>
 <div class="texture-overlay"></div>
@@ -22,7 +26,7 @@
     <div class="auth-icon">𝓕</div>
     <div class="auth-title">Faces</div>
     <div class="auth-sub">Don't worry. You can do it.<br>Enter the passphrase to continue.</div>
-    <input class="auth-input" type="password" id="auth-pw-input" placeholder="••••••••" autocomplete="current-password">
+    <input class="auth-input" type="password" id="auth-pw-input" placeholder="••••••••" autocomplete="current-password" enterkeyhint="go">
     <button class="auth-btn" id="auth-btn">Unlock →</button>
     <div class="auth-error" id="auth-error"></div>
   </div>
@@ -31,14 +35,21 @@
 <!-- ═══ APP ═══ -->
 <div id="app">
   <div class="app-wave-bg">
+    <!-- Layer 1: Deep back, slow -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#C4B5FD" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,170.7C1248,171,1344,149,1440,138.7L1440,320L0,320Z"/>
     </svg>
+    <!-- Layer 2: Mid, medium speed -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#F472B6" d="M0,224L60,213.3C120,203,240,181,360,186.7C480,192,600,224,720,218.7C840,213,960,171,1080,165.3C1200,160,1320,192,1440,197.3L1440,320L0,320Z"/>
     </svg>
+    <!-- Layer 3: Foreground, fastest, lightest, smallest -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#6EE7B7" d="M0,256L80,245.3C160,235,320,213,480,208C640,203,800,213,960,218.7C1120,224,1280,224,1440,213.3L1440,320L0,320Z"/>
+    </svg>
+    <!-- Layer 4: NEW — lighter, smaller, most prominent foreground wave -->
+    <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+      <path fill="rgba(224, 214, 255, 0.35)" d="M0,280L120,272C240,264,480,248,720,252C960,256,1200,280,1440,276C1680,272,1920,240,2160,236C2400,232,2640,256,2760,268L2880,280L2880,320L2760,320C2640,320,2400,320,2160,320C1920,320,1680,320,1440,320C1200,320,960,320,720,320C480,320,240,320,120,320L0,320Z"/>
     </svg>
   </div>
 
@@ -47,7 +58,7 @@
     <span class="top-bar-title">Faces</span>
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input class="search-input" type="search" id="search-input" placeholder="Search…">
+      <input class="search-input" type="search" id="search-input" placeholder="Search…" enterkeyhint="search">
     </div>
     <button class="add-btn" id="open-add-btn" title="Add person">＋</button>
   </div>
@@ -58,9 +69,9 @@
     <button class="filter-pill fav-pill" data-cat="favourites">⭐ Favourites</button>
   </div>
 
-  <!-- Cards -->
-  <div style="position:relative;z-index:1;">
-    <div id="cards-container"><div class="spinner"></div></div>
+  <!-- Cards — now uses cards-grid class directly -->
+  <div class="cards-grid" id="cards-container">
+    <div class="spinner"></div>
   </div>
 </div>
 
@@ -79,7 +90,7 @@
       <div class="form-group">
         <label class="form-label">Photo</label>
         <div class="photo-upload-area" id="photo-upload-area">
-          <input type="file" id="photo-file-input" accept="image/*">
+          <input type="file" id="photo-file-input" accept="image/*" capture="environment">
           <div id="photo-preview-container">
             <span class="upload-icon">📷</span>
             <div class="upload-label">Tap to add photo</div>
@@ -90,11 +101,11 @@
 
       <div class="form-group">
         <label class="form-label">Full Name *</label>
-        <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma">
+        <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma" autocomplete="off" enterkeyhint="next">
       </div>
       <div class="form-group">
         <label class="form-label">What you call them</label>
-        <input class="form-input" type="text" id="f-nick" placeholder="e.g. Pri, the tall one, red jacket">
+        <input class="form-input" type="text" id="f-nick" placeholder="e.g. Pri, the tall one, red jacket" autocomplete="off" enterkeyhint="next">
       </div>
       <div class="form-group">
         <label class="form-label">Category *</label>
@@ -117,7 +128,7 @@
         <label class="form-label">Tags</label>
         <div class="tag-input-wrap">
           <div class="tag-chips" id="tag-chips"></div>
-          <input class="form-input tag-text-input" type="text" id="f-tag-input" placeholder="Type a tag and press Enter…">
+          <input class="form-input tag-text-input" type="text" id="f-tag-input" placeholder="Type a tag and press Enter…" enterkeyhint="next">
         </div>
       </div>
 
@@ -141,7 +152,7 @@
       <!-- Memory hook -->
       <div class="form-group">
         <label class="form-label">Memory Hook / Note</label>
-        <textarea class="form-input" id="f-hook" placeholder="e.g. Loves cricket, drives a red car, has a great laugh"></textarea>
+        <textarea class="form-input" id="f-hook" placeholder="e.g. Loves cricket, drives a red car, has a great laugh" enterkeyhint="done"></textarea>
       </div>
 
       <!-- Favourite -->
@@ -187,11 +198,11 @@
       </div>
       <div class="form-group">
         <label class="form-label">Where</label>
-        <input class="form-input" type="text" id="enc-location" placeholder="e.g. Mall, Doctor's office, Family lunch">
+        <input class="form-input" type="text" id="enc-location" placeholder="e.g. Mall, Doctor's office, Family lunch" enterkeyhint="next">
       </div>
       <div class="form-group">
         <label class="form-label">Note</label>
-        <textarea class="form-input" id="enc-note" placeholder="What happened? What did they wear?"></textarea>
+        <textarea class="form-input" id="enc-note" placeholder="What happened? What did they wear?" enterkeyhint="done"></textarea>
       </div>
       <button class="form-submit" id="enc-submit-btn">Save Encounter</button>
     </div>
