@@ -137,11 +137,8 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); }
 #app.visible { display: block; }
 
 #cards-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   width: 100%;
+  padding: 0;
 }
 
 /* ── Top bar ── */
@@ -196,8 +193,10 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); }
 /* ── Cards grid ── */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(155px, 1fr));
-  gap: 56px 16px; padding: 56px 18px 24px;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 56px 16px; 
+  padding: 56px 18px 24px;
+  width: 100%;
 }
 
 /* ── Person card ── */
