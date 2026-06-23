@@ -133,12 +133,11 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); }
 .auth-error { color: var(--rose); font-size: 13px; margin-top: 10px; min-height: 18px; }
 
 /* ── App shell ── */
-#app { display: none; min-height: 100vh; padding-bottom: 100px; position: relative; z-index: 2; display: flex; flex-direction: column; }
+#app { display: none; min-height: 100vh; padding-bottom: 100px; position: relative; z-index: 2; }
 #app.visible { display: block; }
 
 #cards-container {
   width: 100%;
-  padding: 0;
 }
 
 /* ── Top bar ── */
