@@ -58,7 +58,7 @@ async function tryAuth() {
   authBtn.disabled = true; authBtn.textContent = 'Checking…';
   authError.textContent = '';
   try {
-    const { data, error } = await supabase
+    const { data, error } = await db
       .from('app_config').select('value').eq('key', 'app_password').single();
     if (error) throw error;
     if (data.value === pw) { sessionStorage.setItem('faces_auth', '1'); unlock(); }
@@ -98,7 +98,7 @@ async function init() {
 
 // ─── Categories ──────────────────────────────────
 async function loadCategories() {
-  const { data } = await supabase.from('categories').select('*').order('name');
+  const { data } = await db.from('categories').select('*').order('name');
   categories = data || [];
   renderFilterBar();
   populateCategorySelect();
@@ -152,7 +152,7 @@ function populateCategorySelect() {
 // ─── People ──────────────────────────────────────
 async function loadPeople() {
   document.getElementById('cards-container').innerHTML = '<div class="spinner"></div>';
-  const { data } = await supabase.from('people').select('*').order('name');
+  const { data } = await db.from('people').select('*').order('name');
   allPeople = data || [];
   renderCards();
 }
@@ -247,9 +247,9 @@ async function openDetail(id) {
 
   // Load connections + timeline in parallel
   const [connData, timelineData] = await Promise.all([
-    supabase.from('person_connections')
+    db.from('person_connections')
       .select('*').or(`person_a.eq.${id},person_b.eq.${id}`),
-    supabase.from('encounter_timeline')
+    db.from('encounter_timeline')
       .select('*').eq('person_id', id).order('seen_at', { ascending: false })
   ]);
 
@@ -355,7 +355,7 @@ async function openDetail(id) {
 
   document.getElementById('detail-fav-btn').addEventListener('click', async () => {
     const newFav = !p.favourite;
-    await supabase.from('people').update({ favourite: newFav }).eq('id', id);
+    await db.from('people').update({ favourite: newFav }).eq('id', id);
     p.favourite = newFav;
     document.getElementById('detail-fav-btn').textContent = newFav ? '⭐' : '☆';
     renderCards();
@@ -396,7 +396,7 @@ document.getElementById('enc-submit-btn').addEventListener('click', async () => 
   if (!seenAt) { showToast('Pick a date/time', 'error'); return; }
   const btn = document.getElementById('enc-submit-btn');
   btn.disabled = true; btn.textContent = 'Saving…';
-  const { error } = await supabase.from('encounter_timeline').insert({
+  const { error } = await db.from('encounter_timeline').insert({
     person_id: personId, seen_at: seenAt, location: location||null, note: note||null
   });
   btn.disabled = false; btn.textContent = 'Save Encounter';
@@ -461,7 +461,7 @@ function openEdit(id) {
 
 async function buildKnownByList(currentId) {
   // Load existing connections
-  const { data } = await supabase.from('person_connections')
+  const { data } = await db.from('person_connections')
     .select('*').or(`person_a.eq.${currentId},person_b.eq.${currentId}`);
   const connected = (data||[]).map(c => c.person_a === currentId ? c.person_b : c.person_a);
 
@@ -664,12 +664,12 @@ async function submitForm() {
     let savedId = editingId;
 
     if (editingId) {
-      const { error } = await supabase.from('people').update(payload).eq('id', editingId);
+      const { error } = await db.from('people').update(payload).eq('id', editingId);
       if (error) throw error;
     } else {
       if (!pendingPhoto) delete payload.photo_url;
       if (!pendingVoice) delete payload.voice_memo;
-      const { data, error } = await supabase.from('people').insert(payload).select().single();
+      const { data, error } = await db.from('people').insert(payload).select().single();
       if (error) throw error;
       savedId = data.id;
     }
@@ -680,12 +680,12 @@ async function submitForm() {
       if (list) {
         const selectedIds = [...list.querySelectorAll('.known-by-item.selected')].map(el => el.dataset.pid);
         // Delete all existing connections for this person first
-        await supabase.from('person_connections')
+        await db.from('person_connections')
           .delete().or(`person_a.eq.${editingId},person_b.eq.${editingId}`);
         // Re-insert selected ones
         if (selectedIds.length) {
           const inserts = selectedIds.map(pid => ({ person_a: editingId, person_b: pid }));
-          await supabase.from('person_connections').insert(inserts);
+          await db.from('person_connections').insert(inserts);
         }
       }
     }
@@ -706,7 +706,7 @@ async function submitForm() {
 async function deletePerson(id) {
   const p = allPeople.find(x => x.id === id);
   if (!confirm(`Remove ${p?.name}? This cannot be undone.`)) return;
-  const { error } = await supabase.from('people').delete().eq('id', id);
+  const { error } = await db.from('people').delete().eq('id', id);
   if (error) { showToast('Delete failed', 'error'); return; }
   showToast('Removed', 'success');
   await loadPeople();
