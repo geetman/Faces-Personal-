@@ -14,7 +14,8 @@ const SUPABASE_URL  = 'https://wxzjbubohefcajmbqndq.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind4empidWJvaGVmY2FqbWJxbmRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNDcyMTYsImV4cCI6MjA5NzcyMzIxNn0.x6f7WX_20c75XtzRi9IjG8XW7k8bRtOtjd65vnjpmRw';
 // ════════════════════════════════════════════════
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const db = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 // ─── Tag colour palette (cycles) ────────────────
 const TAG_COLOURS = [
