@@ -674,3 +674,10 @@ textarea.form-input { resize: vertical; min-height: 80px; }
     padding-right: max(18px, env(safe-area-inset-right));
   }
 }
+
+.cards-grid > .spinner,
+.cards-grid > .empty-state {
+  grid-column: 1 / -1;
+  justify-self: center;
+  width: 100%;
+}
