@@ -109,7 +109,6 @@ function getCatById(id) { return categories.find(c => c.id === id); }
 
 function renderFilterBar() {
   const bar = document.getElementById('filter-bar');
-  // keep All + Favourites pills, then add category pills
   bar.innerHTML = `
     <button class="filter-pill ${activeCategory==='all'?'active':''}" data-cat="all">All</button>
     <button class="filter-pill fav-pill ${activeCategory==='favourites'?'active':''}" data-cat="favourites">⭐ Favourites</button>
@@ -131,7 +130,6 @@ function renderFilterBar() {
         b.style.background = ''; b.style.borderColor = ''; b.style.color = '';
       });
       btn.classList.add('active');
-      // colour the category pills when active
       if (btn.dataset.cat !== 'all' && btn.dataset.cat !== 'favourites') {
         const cat = getCatById(btn.dataset.cat);
         if (cat) { btn.style.background = cat.colour; btn.style.borderColor = cat.colour; btn.style.color = '#fff'; }
@@ -152,7 +150,8 @@ function populateCategorySelect() {
 
 // ─── People ──────────────────────────────────────
 async function loadPeople() {
-  document.getElementById('cards-container').innerHTML = '<div class="spinner"></div>';
+  const container = document.getElementById('cards-container');
+  container.innerHTML = '<div class="spinner"></div>';
   const { data } = await db.from('people').select('*').order('name');
   allPeople = data || [];
   renderCards();
@@ -171,6 +170,7 @@ function getFiltered() {
 function renderCards() {
   const container = document.getElementById('cards-container');
   const people = getFiltered();
+
   if (!people.length) {
     container.innerHTML = `
       <div class="empty-state">
@@ -181,8 +181,9 @@ function renderCards() {
     return;
   }
 
-  const grid = document.createElement('div');
-  grid.className = 'cards-grid';
+  // ✅ FIX: append cards directly to #cards-container (which already has cards-grid class)
+  //    instead of creating a redundant inner div.cards-grid
+  container.innerHTML = '';
 
   people.forEach(p => {
     const cat = getCatById(p.relationship_category);
@@ -215,13 +216,10 @@ function renderCards() {
           <button class="card-action-btn del" data-action="delete" data-id="${p.id}">🗑</button>
         </div>
       </div>`;
-    grid.appendChild(card);
+    container.appendChild(card);
   });
 
-  container.innerHTML = '';
-  container.appendChild(grid);
-
-  grid.querySelectorAll('[data-action]').forEach(btn => {
+  container.querySelectorAll('[data-action]').forEach(btn => {
     btn.addEventListener('click', e => {
       e.stopPropagation();
       const id = btn.dataset.id;
@@ -230,7 +228,7 @@ function renderCards() {
       if (btn.dataset.action === 'delete') deletePerson(id);
     });
   });
-  grid.querySelectorAll('.person-card').forEach(card => {
+  container.querySelectorAll('.person-card').forEach(card => {
     card.addEventListener('click', () => openDetail(card.querySelector('[data-action="view"]').dataset.id));
   });
 }
@@ -246,7 +244,6 @@ async function openDetail(id) {
   if (!p) return;
   const cat = getCatById(p.relationship_category);
 
-  // Load connections + timeline in parallel
   const [connData, timelineData] = await Promise.all([
     db.from('person_connections')
       .select('*').or(`person_a.eq.${id},person_b.eq.${id}`),
@@ -271,7 +268,6 @@ async function openDetail(id) {
     ? `<div style="text-align:center;color:var(--muted);font-size:12px;font-weight:700;padding:4px 0 8px;">Last seen: ${formatDate(p.last_seen)}</div>`
     : '';
 
-  // Also Known By mini cards
   const alsoKnownHTML = connectedPeople.length ? `
     <div class="detail-section">
       <div class="detail-section-label">Also Known By</div>
@@ -290,7 +286,6 @@ async function openDetail(id) {
       </div>
     </div>` : '';
 
-  // Timeline
   const timelineHTML = `
     <div class="detail-section">
       <div class="detail-section-label">Encounter Timeline</div>
@@ -349,7 +344,6 @@ async function openDetail(id) {
     <div style="height:16px;"></div>
   `;
 
-  // Wire events
   document.getElementById('detail-modal-close').addEventListener('click', () => closeModal('detail-modal'));
   document.getElementById('detail-edit-btn').addEventListener('click', () => { closeModal('detail-modal'); openEdit(id); });
   document.getElementById('detail-del-btn').addEventListener('click', () => { closeModal('detail-modal'); deletePerson(id); });
@@ -435,13 +429,11 @@ function openEdit(id) {
   document.getElementById('f-last-seen').value  = p.last_seen || '';
   document.getElementById('f-favourite').checked = !!p.favourite;
 
-  // Photo
   if (p.photo_url) {
     document.getElementById('photo-preview-container').innerHTML =
       `<img src="${p.photo_url}" class="photo-preview"><div class="upload-label">Tap to change</div>`;
   } else resetPhotoPreview();
 
-  // Voice
   if (p.voice_memo) {
     pendingVoice = p.voice_memo;
     document.getElementById('voice-status').textContent = 'Existing memo loaded';
@@ -461,7 +453,6 @@ function openEdit(id) {
 }
 
 async function buildKnownByList(currentId) {
-  // Load existing connections
   const { data } = await db.from('person_connections')
     .select('*').or(`person_a.eq.${currentId},person_b.eq.${currentId}`);
   const connected = (data||[]).map(c => c.person_a === currentId ? c.person_b : c.person_a);
@@ -605,7 +596,6 @@ voiceBtn.addEventListener('pointerdown', async () => {
     voiceBtn.textContent = '⏹ Recording… (release to stop)';
     voiceBtn.classList.add('recording');
     document.getElementById('voice-status').textContent = 'Recording…';
-    // Auto-stop after 10 seconds
     recordTimer = setTimeout(() => stopRecording(), 10000);
   } catch(e) {
     showToast('Microphone permission denied', 'error');
@@ -658,7 +648,6 @@ async function submitForm() {
     };
     if (pendingPhoto) payload.photo_url  = pendingPhoto;
     if (pendingVoice !== undefined) {
-      // only update voice if changed (pendingVoice is null = clear, string = new)
       if (pendingVoice !== null || editingId) payload.voice_memo = pendingVoice;
     }
 
@@ -675,15 +664,12 @@ async function submitForm() {
       savedId = data.id;
     }
 
-    // Save Also Known By connections (only in edit mode where list is visible)
     if (editingId) {
       const list = document.getElementById('known-by-list');
       if (list) {
         const selectedIds = [...list.querySelectorAll('.known-by-item.selected')].map(el => el.dataset.pid);
-        // Delete all existing connections for this person first
         await db.from('person_connections')
           .delete().or(`person_a.eq.${editingId},person_b.eq.${editingId}`);
-        // Re-insert selected ones
         if (selectedIds.length) {
           const inserts = selectedIds.map(pid => ({ person_a: editingId, person_b: pid }));
           await db.from('person_connections').insert(inserts);
