@@ -35,15 +35,12 @@
 <!-- ═══ APP ═══ -->
 <div id="app">
   <div class="app-wave-bg">
-    <!-- Layer 1: Deep back, slow -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#C4B5FD" d="M0,192L48,186.7C96,181,192,171,288,176C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,170.7C1248,171,1344,149,1440,138.7L1440,320L0,320Z"/>
     </svg>
-    <!-- Layer 2: Mid, medium speed -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#F472B6" d="M0,224L60,213.3C120,203,240,181,360,186.7C480,192,600,224,720,218.7C840,213,960,171,1080,165.3C1200,160,1320,192,1440,197.3L1440,320L0,320Z"/>
     </svg>
-    <!-- Layer 3: Foreground, fastest, lightest, smallest -->
     <svg viewBox="0 0 2880 320" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
       <path fill="#6EE7B7" d="M0,256L80,245.3C160,235,320,213,480,208C640,203,800,213,960,218.7C1120,224,1280,224,1440,213.3L1440,320L0,320Z"/>
     </svg>
@@ -65,7 +62,12 @@
     <button class="filter-pill fav-pill" data-cat="favourites">⭐ Favourites</button>
   </div>
 
-  <!-- Cards — now uses cards-grid class directly -->
+  <!-- Loading spinner — shown until data arrives, lives outside the grid -->
+  <div id="cards-loader" style="display:none;justify-content:center;align-items:center;padding:60px 0;">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Cards grid — empty until JS populates it -->
   <div class="cards-grid" id="cards-container"></div>
 </div>
 
@@ -79,8 +81,6 @@
     </div>
     <div class="form-body">
       <input type="hidden" id="edit-id">
-
-      <!-- Photo -->
       <div class="form-group">
         <label class="form-label">Photo</label>
         <div class="photo-upload-area" id="photo-upload-area">
@@ -92,7 +92,6 @@
           </div>
         </div>
       </div>
-
       <div class="form-group">
         <label class="form-label">Full Name *</label>
         <input class="form-input" type="text" id="f-name" placeholder="e.g. Priya Sharma" autocomplete="off" enterkeyhint="next">
@@ -107,8 +106,6 @@
           <option value="">— choose —</option>
         </select>
       </div>
-
-      <!-- Totem emoji -->
       <div class="form-group">
         <label class="form-label">Totem Emoji</label>
         <div class="totem-picker-wrap">
@@ -116,8 +113,6 @@
           <div class="totem-grid" id="totem-grid"></div>
         </div>
       </div>
-
-      <!-- Tags -->
       <div class="form-group">
         <label class="form-label">Tags</label>
         <div class="tag-input-wrap">
@@ -125,8 +120,6 @@
           <input class="form-input tag-text-input" type="text" id="f-tag-input" placeholder="Type a tag and press Enter…" enterkeyhint="next">
         </div>
       </div>
-
-      <!-- Voice memo -->
       <div class="form-group">
         <label class="form-label">Voice Memo <span style="font-weight:400;text-transform:none;font-size:11px;">(max 10 sec)</span></label>
         <div class="voice-recorder" id="voice-recorder">
@@ -136,33 +129,24 @@
           <button class="voice-clear-btn" id="voice-clear-btn" type="button" style="display:none;">✕ Remove memo</button>
         </div>
       </div>
-
-      <!-- Last seen -->
       <div class="form-group">
         <label class="form-label">Last Seen</label>
         <input class="form-input" type="date" id="f-last-seen">
       </div>
-
-      <!-- Memory hook -->
       <div class="form-group">
         <label class="form-label">Memory Hook / Note</label>
         <textarea class="form-input" id="f-hook" placeholder="e.g. Loves cricket, drives a red car, has a great laugh" enterkeyhint="done"></textarea>
       </div>
-
-      <!-- Favourite -->
       <div class="form-group fav-toggle-group">
         <label class="fav-toggle-label">
           <input type="checkbox" id="f-favourite">
           <span class="fav-toggle-ui">⭐ Mark as Favourite</span>
         </label>
       </div>
-
-      <!-- Also Known By -->
       <div class="form-group" id="also-known-group" style="display:none;">
         <label class="form-label">Also Known By</label>
         <div class="known-by-list" id="known-by-list"></div>
       </div>
-
       <button class="form-submit" id="form-submit-btn">Save Person</button>
     </div>
   </div>
@@ -172,7 +156,6 @@
 <div class="modal-backdrop" id="detail-modal">
   <div class="modal-sheet" id="detail-content">
     <div class="modal-handle"></div>
-    <!-- filled dynamically -->
   </div>
 </div>
 
