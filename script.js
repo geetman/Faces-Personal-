@@ -151,7 +151,7 @@ function populateCategorySelect() {
 // ─── People ──────────────────────────────────────
 async function loadPeople() {
   const container = document.getElementById('cards-container');
-  container.innerHTML = '<div class="spinner"></div>';
+  container.innerHTML = '<div class="grid-full-row"><div class="spinner"></div></div>';
   const { data } = await db.from('people').select('*').order('name');
   allPeople = data || [];
   renderCards();
@@ -173,11 +173,11 @@ function renderCards() {
 
   if (!people.length) {
     container.innerHTML = `
-      <div class="empty-state">
+      <div class="grid-full-row"><div class="empty-state">
         <div class="big-emoji">👤</div>
         <h3>${allPeople.length ? 'No matches' : 'No people yet'}</h3>
         <p>${allPeople.length ? 'Try a different filter or search.' : 'Tap ＋ to add the first person.'}</p>
-      </div>`;
+      </div></div>`;
     return;
   }
 
