@@ -197,6 +197,14 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); }
   padding: 56px 18px 24px;
   width: 100%;
 }
+.cards-grid > .grid-full-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 300px;
+}
 
 /* ── Person card ── */
 .person-card {
@@ -673,13 +681,4 @@ textarea.form-input { resize: vertical; min-height: 80px; }
     padding-left: max(18px, env(safe-area-inset-left));
     padding-right: max(18px, env(safe-area-inset-right));
   }
-}
-
-.cards-grid > .spinner {
-  grid-column: 1 / -1;
-  justify-self: center;
-}
-.cards-grid > .empty-state {
-  grid-column: 1 / -1;
-  width: 100%;
 }
