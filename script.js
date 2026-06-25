@@ -151,9 +151,12 @@ function populateCategorySelect() {
 // ─── People ──────────────────────────────────────
 async function loadPeople() {
   const container = document.getElementById('cards-container');
-  container.innerHTML = '<div class="grid-full-row"><div class="spinner"></div></div>';
+  const loader = document.getElementById("cards-loader");
+  container.innerHTML = "";
+  if (loader) loader.style.display = "flex";;
   const { data } = await db.from('people').select('*').order('name');
   allPeople = data || [];
+  const loaderEl = document.getElementById("cards-loader"); if (loaderEl) loaderEl.style.display = "none";
   renderCards();
 }
 
