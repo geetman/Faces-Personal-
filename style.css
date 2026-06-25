@@ -675,9 +675,11 @@ textarea.form-input { resize: vertical; min-height: 80px; }
   }
 }
 
-.cards-grid > .spinner,
-.cards-grid > .empty-state {
+.cards-grid > .spinner {
   grid-column: 1 / -1;
   justify-self: center;
+}
+.cards-grid > .empty-state {
+  grid-column: 1 / -1;
   width: 100%;
 }
