@@ -150,15 +150,11 @@ function populateCategorySelect() {
 
 // ─── People ──────────────────────────────────────
 async function loadPeople() {
-  const spinnerEl = document.createElement("div");
-  spinnerEl.className = "spinner";
-  spinnerEl.style.cssText = "position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10;";
-  document.body.appendChild(spinnerEl);
-  const container = document.getElementById('cards-container');
-  container.innerHTML = "";
+  const loader = document.getElementById('cards-loader');
+  if (loader) loader.style.display = 'flex';
   const { data } = await db.from('people').select('*').order('name');
   allPeople = data || [];
-  spinnerEl.remove();
+  if (loader) loader.style.display = 'none';
   renderCards();
 }
 
